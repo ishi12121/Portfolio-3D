@@ -11,12 +11,9 @@ import Header from "@/components/Header";
 const urbanist = Urbanist({ subsets: ["latin"] });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const client = createClient();
-  const settings = await client.getSingle("settings");
-
   return {
-    title: settings.data.meta_title,
-    description: settings.data.meta_description,
+    title: "Ishitva Portfolio 3d",
+    description: "Made using Nextjs , slicemachine , typescript and gsap animations",
     // openGraph: {
     //   images: [settings.data.og_image?.url || ""],
     // },
