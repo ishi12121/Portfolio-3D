@@ -5,6 +5,9 @@ import { Canvas } from "@react-three/fiber";
 import { ContactShadows, Float, Environment } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { Mesh } from "three";
+import { ThreeEvent } from "@react-three/fiber";
+import { Vector3 } from "three";
 
 export function Shapes() {
   return (
@@ -35,33 +38,34 @@ export function Shapes() {
 function Geometries() {
   const geometries = [
     {
-      position: [0, 0, 0],
+      position: new Vector3(0, 0, 0),
       r: 0.3,
       geometry: new THREE.IcosahedronGeometry(3), // Gem
     },
     {
-      position: [1, -0.75, 4],
+      position: new Vector3(1.6, -2.5, 4),
       r: 0.4,
       geometry: new THREE.CapsuleGeometry(0.5, 1.6, 2, 16), // Pill
     },
     {
-      position: [-1.4, 2, -4],
+      position: new Vector3(-2.5, 2, -3),
       r: 0.6,
       geometry: new THREE.DodecahedronGeometry(1.5), // Soccer ball
     },
     {
-      position: [-0.8, -0.75, 5],
+      position: new Vector3(-2.3, -1.75, 5),
       r: 0.5,
       geometry: new THREE.TorusGeometry(0.6, 0.25, 16, 32), // Donut
     },
     {
-      position: [1.6, 1.6, -4],
+      position: new Vector3(4, 1.6, -4),
       r: 0.7,
       geometry: new THREE.OctahedronGeometry(1.5), // Diamond
     },
   ];
 
-  const soundEffects = [
+
+  const soundEffects: HTMLAudioElement[] = [
     new Audio("/sounds/knock1.ogg"),
     new Audio("/sounds/knock2.ogg"),
     new Audio("/sounds/knock3.ogg"),
@@ -90,7 +94,7 @@ function Geometries() {
   return geometries.map(({ position, r, geometry }) => (
     <Geometry
       key={JSON.stringify(position)} // Unique key
-      position={position.map((p) => p * 2)}
+      position={position}
       geometry={geometry}
       soundEffects={soundEffects}
       materials={materials}
@@ -99,8 +103,21 @@ function Geometries() {
   ));
 }
 
-function Geometry({ r, position, geometry, soundEffects, materials }) {
-  const meshRef = useRef();
+function Geometry({
+  r,
+  position,
+  geometry,
+  soundEffects,
+  materials,
+}: {
+  r: number;
+  position: Vector3;
+  geometry: THREE.BufferGeometry;
+  soundEffects: HTMLAudioElement[];
+  materials: THREE.Material[];
+}) {
+  const meshRef = useRef<THREE.Group>(null!);
+
   const [visible, setVisible] = useState(false);
 
   const startingMaterial = getRandomMaterial();
@@ -109,11 +126,11 @@ function Geometry({ r, position, geometry, soundEffects, materials }) {
     return gsap.utils.random(materials);
   }
 
-  function handleClick(e) {
-    const mesh = e.object;
-
+  function handleClick(e: ThreeEvent<MouseEvent>) {
+    const mesh = e.object as Mesh;
+  
     gsap.utils.random(soundEffects).play();
-
+  
     gsap.to(mesh.rotation, {
       x: `+=${gsap.utils.random(0, 2)}`,
       y: `+=${gsap.utils.random(0, 2)}`,
@@ -122,10 +139,9 @@ function Geometry({ r, position, geometry, soundEffects, materials }) {
       ease: "elastic.out(1,0.3)",
       yoyo: true,
     });
-
+  
     mesh.material = getRandomMaterial();
   }
-
   const handlePointerOver = () => {
     document.body.style.cursor = "pointer";
   };
@@ -137,7 +153,7 @@ function Geometry({ r, position, geometry, soundEffects, materials }) {
   useEffect(() => {
     let ctx = gsap.context(() => {
       setVisible(true);
-      gsap.from(meshRef.current.scale, {
+      gsap.from(meshRef.current?.scale, {
         x: 0,
         y: 0,
         z: 0,
@@ -150,7 +166,7 @@ function Geometry({ r, position, geometry, soundEffects, materials }) {
   }, []);
 
   return (
-    <group position={position} ref={meshRef}>
+    <group position={position}  ref={meshRef}>
       <Float speed={5 * r} rotationIntensity={6 * r} floatIntensity={5 * r}>
         <mesh
           geometry={geometry}
