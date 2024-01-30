@@ -1,10 +1,11 @@
 "use client"
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Content, KeyTextField } from "@prismicio/client";
 import { SliceComponentProps } from "@prismicio/react";
 import Bounded from "@/components/Bounded";
 import { Shapes } from "./Shapes";
 import {gsap} from "gsap";
+import WelcomeScreen from "@/components/transitions/WelcomeScreen";
 /**
  * Props for `Hero`.
  */
@@ -15,7 +16,30 @@ export type HeroProps = SliceComponentProps<Content.HeroSlice>;
  */
 const Hero = ({ slice }: HeroProps): JSX.Element => {
   const component = useRef(null);
+  const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
+  useEffect(() => {
+    const fetchPageData = async () => {
+      try {
+        // Simulate delay for the welcome screen (you can remove this in the actual implementation)
+        await new Promise((resolve) => setTimeout(resolve, 4000));
 
+        // Fetch additional data or perform any necessary async operations here
+        // ...
+
+        // Hide the welcome screen
+        setShowWelcomeScreen(false);
+
+        // Simulate delay before showing shapes and letters (you can adjust the duration)
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      } catch (error) {
+        console.error('Error fetching additional data:', error);
+        // Handle error fetching data, e.g., show an error message
+      }
+    };
+
+    // Fetch additional data and hide welcome screen
+    fetchPageData();
+  }, []);
   useEffect(() => {
     let ctx = gsap.context(() => {
       // create as many GSAP animations and/or ScrollTriggers here as you want...
@@ -72,6 +96,9 @@ const renderLetters = (name: KeyTextField, key: string) => {
       data-slice-variation={slice.variation}
       ref={component}
     >
+       {showWelcomeScreen && <WelcomeScreen hideScreen={function (): void {
+        console.error("Function not implemented.");
+      } } />}
       <div className="grid min-h-[70vh] grid-cols-1 items-center md:grid-cols-2">
         <Shapes/>
        <div className="col-start-1 md:row-start-1 " data-speed=".2">

@@ -1,0 +1,54 @@
+%parent-with-centered-children {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  %text-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  %cover-background {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  %home-section {
+    height: 100vh;
+    scroll-snap-type: y mandatory;
+  }
+  
+  // TEXT PLACEHOLDERS
+  
+  %text-title {
+    font-size: var(--text-title);
+    font-family: var(--font-inter);
+    font-weight: 700;
+    letter-spacing: -2px;
+    color: var(--color-grad-1);
+  }
+  
+  %text-subtitle {
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    font-family: var(--font-inter);
+    letter-spacing: -1px;
+    color: var(--color-text-accent);
+  }
+  
+  %text-paragraph {
+    font-family: var(--font-open-sans);
+    font-size: var(--text-md);
+    font-weight: 400;
+  }
+  
+  %memoji {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    background: var(--color-grey-light-3);
+  }
